@@ -1,16 +1,16 @@
 package ru.kata.spring.boot_security.demo.service;
 
+
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import ru.kata.spring.boot_security.demo.model.Role;
-import ru.kata.spring.boot_security.demo.repository.RoleRepository;
-
+import ru.kata.spring.boot_security.demo.repositories.RoleRepository;
 
 import java.util.List;
 
 @Service
-public class RoleServiceImpl implements RoleService {
+public class RoleServiceImpl implements RoleService{
     private final RoleRepository roleRepository;
 
     @Autowired
@@ -19,14 +19,23 @@ public class RoleServiceImpl implements RoleService {
     }
 
     @Override
-    @Transactional(readOnly = true)
-    public List<Role> getAllRoles() {
+    public void add(Role role) {
+        roleRepository.save(role);
+    }
+
+    @Override
+    public List<Role> getListRoles() {
         return roleRepository.findAll();
     }
 
     @Override
-    @Transactional
-    public void saveRole(Role role) {
-        roleRepository.save(role);
+    public List<Role> getRolesListById(List<Long> id) {
+        return roleRepository.findAllById(id);
     }
+
+    @Override
+    public Role getRoleById(Long id) {
+        return roleRepository.getById(id);
+    }
+
 }

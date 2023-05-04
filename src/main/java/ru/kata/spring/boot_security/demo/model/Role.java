@@ -1,66 +1,55 @@
 package ru.kata.spring.boot_security.demo.model;
 
+
 import org.springframework.security.core.GrantedAuthority;
 
 import javax.persistence.*;
-import java.util.HashSet;
-import java.util.Set;
 
 @Entity
 @Table(name = "roles")
-public class Role implements GrantedAuthority {
+public class Role implements GrantedAuthority{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
-    @Column(unique = true)
-    private String name;
+    @Column(name = "id")
+    private Long id;
 
-    @ManyToMany(mappedBy = "roles")
-    private Set<User> users = new HashSet<>();
+    @Column(name = "rolename")
+    private String rolename;
+
+    public Role(String role) {
+        this.rolename = role;
+    }
+
+    public Role(Long id, String role) {
+        this.id = id;
+        this.rolename = role;
+    }
 
     public Role() {
     }
 
-    public Role(long id) {
-        this.id = id;
-    }
-
-    public Role(long id, String name) {
-        this.id = id;
-        this.name = name;
-    }
-
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getRolename() {
+        return rolename;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Set<User> getUsers() {
-        return users;
-    }
-
-    public void setUsers(Set<User> users) {
-        this.users = users;
+    public void setRolename(String rolename) {
+        this.rolename = rolename;
     }
 
     @Override
     public String getAuthority() {
-        return getName();
+        return rolename;
     }
-
     @Override
     public String toString() {
-        return name;
+        return rolename;
     }
 }

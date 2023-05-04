@@ -9,43 +9,38 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
-import java.util.stream.Collectors;
 
-@Entity
 @Table(name = "users")
+@Entity
 public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Long id;
-    @Column
-    private String firstname;
-    @Column
-    private String lastname;
-    @Column
-    private int age;
-    @Column(unique = true)
-    private String email;
-    @Column
+
+    @Column(name = "password")
     private String password;
 
-    public User() {
-    }
+    @Column(unique = true, name = "email")
+    private String email;
 
-    public User(String firstname, String lastname, int age, String email, String password, Set<Role> roles) {
-        this.firstname = firstname;
-        this.lastname = lastname;
-        this.age = age;
-        this.email = email;
-        this.password = password;
-        this.roles = roles;
-    }
+    @Column(name = "firstName")
+    private String firstName;
 
-    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinTable(
-            name = "users_roles",
+    @Column(name = "lastName")
+    private String lastName;
+
+    @Column(name = "age")
+    private int age;
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "users_roles",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles = new HashSet<>();
+
+    public User() {
+    }
 
     public Long getId() {
         return id;
@@ -55,28 +50,8 @@ public class User implements UserDetails {
         this.id = id;
     }
 
-    public String getFirstname() {
-        return firstname;
-    }
-
-    public void setFirstname(String firstname) {
-        this.firstname = firstname;
-    }
-
-    public String getLastname() {
-        return lastname;
-    }
-
-    public void setLastname(String lastname) {
-        this.lastname = lastname;
-    }
-
-    public int getAge() {
-        return age;
-    }
-
-    public void setAge(int age) {
-        this.age = age;
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public String getEmail() {
@@ -87,8 +62,28 @@ public class User implements UserDetails {
         this.email = email;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public int getAge() {
+        return age;
+    }
+
+    public void setAge(int age) {
+        this.age = age;
     }
 
     public Set<Role> getRoles() {
@@ -99,36 +94,39 @@ public class User implements UserDetails {
         this.roles = roles;
     }
 
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return getRoles();
-    }
-
-    @Override
-    public String getPassword() {
-        return this.password;
+    public User(String password, String email, String firstName, String lastName, int age, Set<Role> roles) {
+        this.password = password;
+        this.email = email;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.age = age;
+        this.roles = roles;
     }
 
     @Override
     public String getUsername() {
         return email;
     }
-
+    @Override
+    public String getPassword() {
+        return password;
+    }
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return  roles;
+    }
     @Override
     public boolean isAccountNonExpired() {
         return true;
     }
-
     @Override
     public boolean isAccountNonLocked() {
         return true;
     }
-
     @Override
     public boolean isCredentialsNonExpired() {
         return true;
     }
-
     @Override
     public boolean isEnabled() {
         return true;
@@ -139,20 +137,11 @@ public class User implements UserDetails {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         User user = (User) o;
-        return age == user.age && Objects.equals(id, user.id) && Objects.equals(firstname, user.firstname) &&
-                Objects.equals(lastname, user.lastname) && Objects.equals(email, user.email)
-                && Objects.equals(password, user.password) && Objects.equals(roles, user.roles);
+        return id == user.id;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, firstname, lastname, age, email, password, roles);
+        return Objects.hash(id);
     }
-
-    public String getRolesString() {
-        return roles.stream().map(m->m.toString()).collect(Collectors.joining(" "));
-    }
-
-
-
 }
