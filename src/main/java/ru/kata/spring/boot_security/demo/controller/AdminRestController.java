@@ -16,12 +16,12 @@ import java.util.List;
 @RequestMapping("api/admins")
 public class AdminRestController {
     private final UserService userService;
-    private final BCryptPasswordEncoder passwordEncoder;
+
 
     @Autowired
-    public AdminRestController(UserService userService, BCryptPasswordEncoder passwordEncoder) {
+    public AdminRestController(UserService userService) {
         this.userService = userService;
-        this.passwordEncoder = passwordEncoder;
+
     }
     @GetMapping
     public ResponseEntity<List<User>> showUsers() {
@@ -41,7 +41,6 @@ public class AdminRestController {
 
     @PostMapping("/newAddUser")
     public ResponseEntity<HttpStatus> saveNewUser(@RequestBody User user) {
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
         userService.add(user);
         return new ResponseEntity<> (HttpStatus.OK);
     }
@@ -56,9 +55,7 @@ public class AdminRestController {
     @PatchMapping("/users/{id}")
     public ResponseEntity<HttpStatus> userSaveEdit(@RequestBody  User user, @PathVariable Long id) {
         user.setId(id);
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
         userService.update(user, id);
-
         return new ResponseEntity<> (HttpStatus.OK);
     }
 }
